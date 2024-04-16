@@ -20,6 +20,12 @@ configurations {
     }
 }
 
+
+dependencyManagement {
+    imports {
+        mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+    }
+}
 repositories {
     mavenCentral()
     maven {url "https://jitpack.io"}
