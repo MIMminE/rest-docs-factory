@@ -1,23 +1,11 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.2.4'
+    id 'org.springframework.boot' version '3.2.4' apply false
     id 'io.spring.dependency-management' version '1.1.4'
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
     id 'maven-publish'
 }
 
-
-apply plugin: 'java'
-apply plugin: 'maven-publish'
-
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            from components.java
-        }
-    }
-}
 
 group = 'nutslib'
 version = '1.0'
@@ -34,6 +22,19 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven {url "https://jitpack.io"}
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'nuts.libs'
+            artifactId = 'rest-docs-factory'
+            version = '1.0-new'
+
+            from components.java
+        }
+    }
 }
 
 ext {
