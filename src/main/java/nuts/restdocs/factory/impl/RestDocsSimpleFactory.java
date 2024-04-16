@@ -1,8 +1,12 @@
-package nuts.restdocs.factory;
+package nuts.restdocs.factory.impl;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nuts.restdocs.factory.RestDocsFactory;
+import nuts.restdocs.factory.RestDocsField;
+import nuts.restdocs.factory.RestDocsHolder;
+import nuts.restdocs.factory.RestDocsSnippet;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.FieldDescriptor;
@@ -18,9 +22,7 @@ import java.util.function.Function;
 
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 
-
 @Slf4j
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RestDocsSimpleFactory implements RestDocsFactory {
 
     Set<Class<?>> requestSet = new HashSet<>();
@@ -35,11 +37,14 @@ public class RestDocsSimpleFactory implements RestDocsFactory {
                 this.requestFields(requestClass),
                 this.responseFields(responseClass));
         return document;
-
     }
 
-    public RestDocsSimpleFactory(Class<?>... clazz) {
-        for (Class<?> aClass : clazz) {
+    /**
+     *
+     * @param classes of annotated '@RestDocsHolder',
+     */
+    public RestDocsSimpleFactory(Iterable<Class<?>> classes) {
+        for (Class<?> aClass : classes) {
             RestDocsHolder annotation = aClass.getAnnotation(RestDocsHolder.class);
             try {
                 switch (annotation.value()) {
@@ -74,24 +79,20 @@ public class RestDocsSimpleFactory implements RestDocsFactory {
             }
         }
 
-        return null;
+        throw new RuntimeException("Bad Request Holder");
     }
 
     @Override
     public ResponseFieldsSnippet responseFields(Class<?> responesClass) {
-        System.out.println("call");
         for (Class<?> aClass : responseSet) {
-            System.out.println("call2");
             Field[] declaredFields = aClass.getDeclaredFields();
             for (Field declaredField : declaredFields) {
                 if (declaredField.getType().isAssignableFrom(responesClass)) {
-                    System.out.println("call3");
                     ResponseFieldsSnippet result = PayloadDocumentation.responseFields();
                     Function<ResponseFieldsSnippet, ResponseFieldsSnippet> snippetFunction = null;
 
                     if (declaredField.isAnnotationPresent(RestDocsSnippet.class)) {
                         RestDocsSnippet responseSnippet = declaredField.getAnnotation(RestDocsSnippet.class);
-
                         snippetFunction = responseSnippetFunction(responseSnippet);
                     }
                     return Objects.requireNonNull(snippetFunction).apply(result);
@@ -99,7 +100,7 @@ public class RestDocsSimpleFactory implements RestDocsFactory {
             }
         }
 
-        return null;
+        throw new RuntimeException("Bad Response Holder");
     }
 
     private Function<ResponseFieldsSnippet, ResponseFieldsSnippet> responseSnippetFunction(RestDocsSnippet responseSnippet) {
