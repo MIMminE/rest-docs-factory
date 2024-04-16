@@ -18,6 +18,7 @@ import java.util.function.Function;
 
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 
+
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RestDocsSimpleFactory implements RestDocsFactory {
