@@ -27,6 +27,10 @@ repositories {
 publishing {
     publications {
         maven(MavenPublication) {
+            groupId = 'nuts.lib' as Publication
+            artifactId = 'rest-docs-factory' as Publication
+            version = "1.0" as Publication
+
             from components.java
         }
     }
