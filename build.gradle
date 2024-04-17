@@ -7,7 +7,7 @@ plugins {
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
     id 'maven-publish'
 }
-group = "spring.restdocsfactory"
+group = "nuts.lib"
 version = "1.0"
 
 java {
